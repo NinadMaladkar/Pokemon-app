@@ -1,3 +1,6 @@
+This app was built using [pokeapi](pokeapi.co) and is deployed on Netlify. 
+[Link to the app](https://pokemonia.netlify.app/)
+
 This project was bootstrapped with
 [Create React App](https://github.com/facebook/create-react-app).
 
