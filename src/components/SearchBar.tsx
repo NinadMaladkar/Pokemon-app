@@ -11,7 +11,7 @@ export const SearchBar = ({ setSearchTerm }: searchProps) => {
       <Input
         size='md'
         variant='outline'
-        placeholder='Search...'
+        placeholder='Search your favorite Pokémon...'
         onChange={(event) => {
           setSearchTerm(event.target.value);
         }}

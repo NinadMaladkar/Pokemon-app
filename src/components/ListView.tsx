@@ -14,6 +14,7 @@ import { getAllPokemon, getSinglePokemon, PokemonResponseData } from '../apis';
 import { PokemonDetails } from '../apis';
 import { SearchBar } from './SearchBar';
 import PokemonListItem from './PokemonListItem';
+import Loading from './Loading';
 
 export interface PokemonData {
   name: string;
@@ -29,6 +30,7 @@ interface ListState {
   nextPageUrl: string;
   prevPageUrl: string;
   inputValue: string;
+  loading: boolean;
 }
 
 export class ListView extends React.Component<ListProps, ListState> {
@@ -40,6 +42,7 @@ export class ListView extends React.Component<ListProps, ListState> {
       nextPageUrl: '',
       prevPageUrl: '',
       inputValue: '',
+      loading: false,
     };
     this.setSearchTerm = this.setSearchTerm.bind(this);
   }
@@ -55,6 +58,7 @@ export class ListView extends React.Component<ListProps, ListState> {
   sortedData: PokemonDetails[] = [];
 
   async getPokemonDetails(url: string) {
+    this.setState({ loading: true });
     this.allPokemonData = await getAllPokemon(url);
 
     this.pokemonDetails = this.allPokemonData.results.map(
@@ -72,6 +76,7 @@ export class ListView extends React.Component<ListProps, ListState> {
       nextPageUrl: this.allPokemonData.next,
       prevPageUrl: this.allPokemonData.previous,
     });
+    this.setState({ loading: false });
   }
 
   async getNextPageData(): Promise<void> {
@@ -116,7 +121,7 @@ export class ListView extends React.Component<ListProps, ListState> {
   render() {
     return (
       <div>
-        <HStack>
+        <HStack justifyContent='center'>
           <Box>
             <SearchBar setSearchTerm={this.setSearchTerm} />
           </Box>
@@ -149,72 +154,78 @@ export class ListView extends React.Component<ListProps, ListState> {
         </HStack>
 
         <Center>
-          <Wrap spacing='20px' mt='20px' justify='center'>
-            {this.state.inputValue
-              ? this.filteredData.map((pokemon, i) => {
-                  return (
-                    <Box
-                      key={i}
-                      mt='10px'
-                      borderWidth='1px'
-                      w='150px'
-                      rounded='lg'
-                      bgColor='teal.100'
-                      boxShadow='md'>
-                      <Center>
-                        <Box p='2'>
-                          <PokemonListItem
-                            name={pokemon['name']}
-                            id={pokemon.id}
-                            weight={pokemon.weight}
-                            types={pokemon.types}
-                            abilities={pokemon.abilities}
-                            height={pokemon.height}
-                            moves={pokemon.moves}
-                          />
-                        </Box>
-                      </Center>
-                    </Box>
-                  );
-                })
-              : this.state.pokemonData.map((pokemon, i) => {
-                  return (
-                    <Box
-                      key={i}
-                      mt='10px'
-                      borderWidth='1px'
-                      w='150px'
-                      rounded='lg'
-                      bgColor='teal.100'
-                      boxShadow='md'>
-                      <Center>
-                        <Box p='2'>
-                          <PokemonListItem
-                            name={pokemon['name']}
-                            id={pokemon.id}
-                            weight={pokemon.weight}
-                            types={pokemon.types}
-                            abilities={pokemon.abilities}
-                            height={pokemon.height}
-                            moves={pokemon.moves}
-                          />
-                        </Box>
-                      </Center>
-                    </Box>
-                  );
-                })}
-          </Wrap>
+          {this.state.loading ? (
+            <Loading />
+          ) : (
+            <Wrap spacing='20px' m='20px' justify='start'>
+              {this.state.inputValue
+                ? this.filteredData.map((pokemon, i) => {
+                    return (
+                      <Box
+                        key={i}
+                        mt='10px'
+                        borderWidth='1px'
+                        w='150px'
+                        rounded='lg'
+                        bgColor='teal.100'
+                        boxShadow='md'>
+                        <Center>
+                          <Box p='2'>
+                            <PokemonListItem
+                              name={pokemon['name']}
+                              id={pokemon.id}
+                              weight={pokemon.weight}
+                              types={pokemon.types}
+                              abilities={pokemon.abilities}
+                              height={pokemon.height}
+                              moves={pokemon.moves}
+                            />
+                          </Box>
+                        </Center>
+                      </Box>
+                    );
+                  })
+                : this.state.pokemonData.map((pokemon, i) => {
+                    return (
+                      <Box
+                        key={i}
+                        mt='10px'
+                        borderWidth='1px'
+                        w='150px'
+                        rounded='lg'
+                        bgColor='teal.100'
+                        boxShadow='md'>
+                        <Center>
+                          <Box p='2'>
+                            <PokemonListItem
+                              name={pokemon['name']}
+                              id={pokemon.id}
+                              weight={pokemon.weight}
+                              types={pokemon.types}
+                              abilities={pokemon.abilities}
+                              height={pokemon.height}
+                              moves={pokemon.moves}
+                            />
+                          </Box>
+                        </Center>
+                      </Box>
+                    );
+                  })}
+            </Wrap>
+          )}
         </Center>
         <Center my={5}>
-          <Button
-            rightIcon={<FaArrowRight />}
-            colorScheme='teal'
-            variant='solid'
-            onClick={() => {
-              this.getNextPageData();
-            }}>
-            Next
-          </Button>
+          {(!this.state.loading || this.state.inputValue) && (
+            <Button
+              rightIcon={<FaArrowRight />}
+              colorScheme='teal'
+              variant='solid'
+              onClick={() => {
+                this.getNextPageData();
+              }}>
+              Next
+            </Button>
+          )}
         </Center>
       </div>
     );

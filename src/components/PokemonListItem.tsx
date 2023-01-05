@@ -70,7 +70,11 @@ class ListItem extends React.Component<ListProps, ListState> {
                   height: this.props.height,
                   image: this.image,
                 }}>
-                <Button variant='ghost'>More Details</Button>
+                <Button
+                  variant='ghost'
+                  _hover={{ backgroundColor: 'yellow.100' }}>
+                  More Details
+                </Button>
               </Link>
             </Box>
           </VStack>
